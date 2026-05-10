@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>MLB AI Live</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <style>
+    body{font-family:Arial;background:#0b1220;color:white;padding:20px}
+    button{padding:10px;margin-top:10px}
+    .card{background:#111b2e;padding:10px;margin:10px 0;border-radius:10px}
+  </style>
+</head>
+<body>
+
+<h2>⚾ MLB AI LIVE</h2>
+
+<button onclick="loadGames()">Load Games</button>
+<div id="games"></div>
+
+<br>
+
+<input id="q" placeholder="Ask MLB AI" style="padding:10px;width:80%">
+<button onclick="askAI()">Ask</button>
+
+<div id="ai"></div>
+
+<script>
+async function loadGames(){
+  const res = await fetch('/api/games');
+  const data = await res.json();
+
+  document.getElementById('games').innerHTML =
+    data.map(g =>
+      `<div class='card'>${g.away} @ ${g.home} - ${g.time}</div>`
+    ).join('');
+}
+
+async function askAI(){
+  const q = document.getElementById('q').value;
+
+  const res = await fetch('/api/ask', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({question:q})
+  });
+
+  const data = await res.json();
+
+  document.getElementById('ai').innerHTML =
+    `<div class='card'>${data.reply}</div>`;
+}
+</script>
+
+</body>
+</html>
